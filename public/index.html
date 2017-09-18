@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+    <h1>Enter CMD code</h1>
+    <form action="/register" method="post" name="registerForm">
+        <input type="text" name="cmdCode" /></br></br>
+        <input type="text" id="codeCommit" /></br></br>
+        <input id="submit_code" class="btn btn-inverse" type="submit" value="Отправить" />
+    </form>
+    <div>
+        <table id="listT" class="table table-bordered"><tr><th>Commands</th><th>Commit</th><th>Feedback</th><th>Status</th><th>Start cmd</th><th>Finish cmd</th></tr><tbo</table>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <script type="text/javascript" charset="windows-1251">
+        $("form").submit(function(e) {
+            var date = new Date();
+            var date_start = date.getHours()+'h '+date.getMinutes()+'m '+date.getSeconds()+'s '+date.getMilliseconds()+'ms';             
+             
+            e.preventDefault();
+            var registerForm = document.forms["registerForm"];
+            var cmd_code = registerForm.elements["cmdCode"].value;
+            var code_commit = $('#codeCommit').val();
+
+            if(cmd_code!=''){
+                $("#submit_code").attr('disabled',true);
+                $('#listT').append('<tr><td>'+cmd_code+'</td><td>'+code_commit+'</td><td id="cdmTD"></td><td id="status">wait..</td><td id="start_time"></td><td id="finish_time"></td></tr>');
+                $.ajax({
+                    type: "POST",
+                    url: "/user",
+                    headers: {'Content-Type': 'application/json; charset=utf-8'},
+                    data: JSON.stringify({cmdCode: cmd_code}),
+                    dataType: "json",
+                    // contentType: "application/json",
+                    success: function(data){ 
+                        if(data.errors !== null){
+                            $('#cdmTD').html(''+data.code+'').removeAttr('id');
+                            $('#status').addClass('error').html('Error').removeAttr('id');
+                            $("#submit_code").removeAttr('disabled');    
+                        }
+                        else{
+                            $('#cdmTD').html(''+data.code+'').removeAttr('id');
+                            $('#status').addClass('ready').html('Success').removeAttr('id');
+                            $("#submit_code").removeAttr('disabled');
+                            $('#start_time').html(''+date_start+'').removeAttr('id');
+                            var date = new Date();      
+                            var date_finish = date.getHours()+'h '+date.getMinutes()+'m '+date.getSeconds()+'s '+date.getMilliseconds()+'ms';  
+                            $('#finish_time').html(''+date_finish+'').removeAttr('id');                    
+                        }
+                    }
+                });                
+            }
+            else{
+                alert('Enter cmd code')
+            }; 
+
+        });
+    </script>
+</body>
+<html>

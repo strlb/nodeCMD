@@ -1,0 +1,14 @@
+th{
+  background-color: black;
+  color: white;
+  opacity: 0.8; 
+}
+#status{
+  color: darkorange
+}
+.ready{
+  color:darkgreen;
+}
+.error{
+  color:red;
+}
